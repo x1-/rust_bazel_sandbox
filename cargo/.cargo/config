@@ -1,0 +1,5 @@
+[source.crates-io]
+replace-with = "vendored-sources"
+
+[source.vendored-sources]
+directory = "$ABSOLUTE_PATH/rust_bazel_sandbox/cargo/vendor"
