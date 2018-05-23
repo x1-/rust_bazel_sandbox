@@ -1,0 +1,95 @@
+"""
+cargo-raze crate build file.
+
+DO NOT EDIT! Replaced on runs of cargo-raze
+"""
+package(default_visibility = ["//visibility:public"])
+
+licenses([
+  "restricted", # "no license"
+])
+
+load(
+    "@io_bazel_rules_rust//rust:rust.bzl",
+    "rust_library",
+    "rust_binary",
+    "rust_test",
+    "rust_bench_test",
+)
+rust_binary(
+    name = "ring_build_script",
+    srcs = glob(["**/*.rs"]),
+    crate_root = "build.rs",
+    deps = [
+        "@raze__gcc__0_3_54//:gcc",
+        "@raze__rayon__0_7_1//:rayon",
+    ],
+    rustc_flags = [
+        "--cap-lints allow",
+        "--target=x86_64-apple-darwin",
+    ],
+    crate_features = [
+      "default",
+      "dev_urandom_fallback",
+      "rsa_signing",
+      "use_heap",
+    ],
+    data = glob(["*"]),
+    visibility = ["//visibility:private"],
+)
+
+genrule(
+    name = "ring_build_script_executor",
+    srcs = glob(["*", "**/*.rs"]),
+    outs = ["ring_out_dir_outputs.tar.gz"],
+    tools = [":ring_build_script"],
+    local = 1,
+    cmd = "mkdir ring_out_dir_outputs/;"
+        + " (export CARGO_MANIFEST_DIR=\"$$PWD/$$(dirname $(location :Cargo.toml))\";"
+        + " export TARGET='x86_64-apple-darwin';"
+        + " export RUST_BACKTRACE=1;"
+        + " export CARGO_FEATURE_DEFAULT=1;"
+        + " export CARGO_FEATURE_DEV_URANDOM_FALLBACK=1;"
+        + " export CARGO_FEATURE_RSA_SIGNING=1;"
+        + " export CARGO_FEATURE_USE_HEAP=1;"
+        + " export OUT_DIR=$$PWD/ring_out_dir_outputs;"
+        + " export BINARY_PATH=\"$$PWD/$(location :ring_build_script)\";"
+        + " export OUT_TAR=$$PWD/$@;"
+        + " cd $$(dirname $(location :Cargo.toml)) && $$BINARY_PATH && tar -czf $$OUT_TAR -C $$OUT_DIR .)"
+)
+
+# Unsupported target "agreement_tests" with type "test" omitted
+# Unsupported target "checkdigest" with type "example" omitted
+# Unsupported target "digest_tests" with type "test" omitted
+# Unsupported target "ecdsa_tests" with type "test" omitted
+# Unsupported target "ed25519_tests" with type "test" omitted
+# Unsupported target "hkdf_tests" with type "test" omitted
+# Unsupported target "pbkdf2_tests" with type "test" omitted
+
+rust_library(
+    name = "ring",
+    crate_root = "src/lib.rs",
+    crate_type = "lib",
+    srcs = glob(["**/*.rs"]),
+    deps = [
+        "@raze__libc__0_2_40//:libc",
+        "@raze__untrusted__0_5_1//:untrusted",
+    ],
+    rustc_flags = [
+        "--cap-lints allow",
+        "--target=x86_64-apple-darwin",
+        "--cfg 'feature=\"default\"'",
+        "--cfg 'feature=\"dev_urandom_fallback\"'",
+        "--cfg 'feature=\"use_heap\"'",
+    ],
+    out_dir_tar = ":ring_build_script_executor",
+    data = ["src/ec/curve25519/ed25519_pkcs8_v2_template.der", "src/ec/suite_b/ecPublicKey_p256_pkcs8_v1_template.der", "src/ec/suite_b/ecPublicKey_p384_pkcs8_v1_template.der", "src/data/alg-rsa-encryption.der"],
+    crate_features = [
+        "default",
+        "dev_urandom_fallback",
+        "rsa_signing",
+        "use_heap",
+    ],
+)
+
+# Unsupported target "rsa_tests" with type "test" omitted

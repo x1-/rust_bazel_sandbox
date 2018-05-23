@@ -7,6 +7,6 @@ load("@io_bazel_rules_rust//rust:repositories.bzl", "rust_repositories")
 
 rust_repositories()
 
-#load("//cargo:crates.bzl", "raze_fetch_remote_crates")
+load("//cargo:crates.bzl", "raze_fetch_remote_crates")
 
-#raze_fetch_remote_crates()
+raze_fetch_remote_crates()
