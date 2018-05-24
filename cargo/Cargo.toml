@@ -24,6 +24,8 @@ additional_flags = [
   "--cfg 'feature=\\\"default\\\"'",
   "--cfg 'feature=\\\"dev_urandom_fallback\\\"'",
   "--cfg 'feature=\\\"use_heap\\\"'",
+  "-l static=ring-core",
+  "-L native=/tmp/ring_out_dir_outputs",
 ]
 gen_buildrs = true
 

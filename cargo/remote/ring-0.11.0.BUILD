@@ -55,6 +55,7 @@ genrule(
         + " export OUT_DIR=$$PWD/ring_out_dir_outputs;"
         + " export BINARY_PATH=\"$$PWD/$(location :ring_build_script)\";"
         + " export OUT_TAR=$$PWD/$@;"
+# ここから追加
         + " export CARGO_PKG_NAME=ring;"
         + " export CARGO_CFG_TARGET_ARCH=x86_64;"
         + " export CARGO_CFG_TARGET_OS=macos;"
@@ -62,7 +63,9 @@ genrule(
         + " export DEBUG=false;"
         + " export OPT_LEVEL=2;"
         + " export HOST=x86_64-apple-darwin;"
+# ここまで
 #        + " cd $$(dirname $(location :Cargo.toml)) && $$BINARY_PATH && tar -czf $$OUT_TAR -C $$OUT_DIR .)"
+# /tmp に　ring_out_dir_outputs へのシンボリックリンクを作成
         + " cd $$(dirname $(location :Cargo.toml)) && $$BINARY_PATH && tar -czf $$OUT_TAR -C $$OUT_DIR . && ln -nfs $$OUT_DIR /tmp/ring_out_dir_outputs)"
 )
 

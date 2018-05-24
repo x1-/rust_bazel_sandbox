@@ -10,5 +10,5 @@ fn main() {
 
     let client = hyper::Client::with_connector(HttpsConnector::new(hyper_rustls::TlsClient::new()));
     let res = client.get("https://github.com").send().unwrap();
-    assert_eq!(res.status, hyper::Ok);
+    println!("{:?}", res.status);
 }
